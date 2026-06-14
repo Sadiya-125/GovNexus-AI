@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id             String          @id @default(cuid())
+  userId         String
+  name           String
+  price          Decimal         @db.Decimal(10, 4)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  unitCost       Decimal         @db.Decimal(10, 4)
+  category       String?
+  quantity       Int             @default(0)
+  orders         Order[]
+  suppliers      Supplier[]
+  supplierOrders SupplierOrder[]
+
+  @@index([userId, name])
+  @@index([createdAt])
+  @@index([category])
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  userId      String
+  productId   String
+  orderDate   DateTime
+  orderQty    Int
+  costOfSales Decimal  @db.Decimal(12, 4)
+  sales       Decimal  @db.Decimal(12, 4)
+  profit      Decimal  @db.Decimal(12, 4)
+  year        Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId, orderDate])
+  @@index([productId])
+  @@index([year])
+  @@index([createdAt])
+}
+
+model Supplier {
+  id             String          @id @default(cuid())
+  userId         String
+  productId      String?
+  category       String?
+  contactNumber  String
+  supplierName   String?
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  name           String?
+  product        Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplierOrders SupplierOrder[]
+
+  @@index([userId, productId])
+  @@index([userId, category])
+  @@index([createdAt])
+}
+
+model UserProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  userType    String   @default("retailer")
+  phoneNumber String?
+  companyName String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userType])
+}
+
+model SupplierOrder {
+  id              String   @id @default(cuid())
+  retailerUserId  String
+  supplierId      String
+  productId       String?
+  category        String?
+  productName     String
+  requestedQty    Int
+  predictedDemand Float?
+  status          String   @default("pending")
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  product         Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplier        Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@index([retailerUserId])
+  @@index([supplierId])
+  @@index([status])
+  @@index([createdAt])
+}
