@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
     // Gather phone number via DTMF or speech
     // Use numDigits: 0 and finishOnKey: "#" to allow flexible input
     const gather = response.gather({
-      input: "dtmf speech",
+      input: ["dtmf", "speech"],
       numDigits: 0,  // Allow any number of digits
       method: "POST",
       action: `/api/voice/collect-phone?sessionId=${sessionId}&attempt=1`,
