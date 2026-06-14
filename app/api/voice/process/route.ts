@@ -152,10 +152,8 @@ export async function POST(request: NextRequest) {
         language: session.language,
       });
 
-      // Say the response text (Twilio will handle the speech)
-      response.say(agentResponse.text, {
-        voice: "alice",
-      });
+      // Say the response text
+      response.say(agentResponse.text);
 
       // Gather next input
       const gather = response.gather({

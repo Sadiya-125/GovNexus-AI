@@ -27,14 +27,14 @@ function Skeleton({ className = "" }: { className?: string }) {
 function LoadingSidebar() {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-    { name: "Products", href: "/inventory", icon: Package },
-    { name: "Orders", href: "/orders", icon: ShoppingCart },
-    { name: "Supplier Orders", href: "/supplier-orders", icon: Truck },
-    { name: "AI Chatbot", href: "/chatbot", icon: Bot },
+    { name: "Resources", href: "/inventory", icon: Package },
+    { name: "Requisitions", href: "/orders", icon: ShoppingCart },
+    { name: "Procurement Requests", href: "/supplier-orders", icon: Truck },
+    { name: "Resource Assistant", href: "/chatbot", icon: Bot },
     { name: "Train Model", href: "/train-model", icon: Brain },
-    { name: "Advanced ML", href: "/advanced-ml", icon: Sparkles },
-    { name: "Data Analysis", href: "/eda", icon: LineChart },
-    { name: "Optimization", href: "/optimize", icon: TrendingUp },
+    { name: "Advanced Analytics", href: "/advanced-ml", icon: Sparkles },
+    { name: "Analytics & Insights", href: "/eda", icon: LineChart },
+    { name: "Resource Optimization", href: "/optimize", icon: TrendingUp },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
@@ -44,14 +44,14 @@ function LoadingSidebar() {
         <div className="flex items-center space-x-2 mb-4">
           <Link href="/" className="flex items-center space-x-2">
             <BarChart3 className="w-7 h-7" />
-            <span className="text-lg font-semibold">Inventory App</span>
+            <span className="text-lg font-semibold">GovNexus AI</span>
           </Link>
         </div>
       </div>
 
       <nav className="space-y-1">
         <div className="text-sm font-semibold text-gray-400 uppercase">
-          Inventory
+          Resources
         </div>
         {navigation.map((item) => {
           const IconComponent = item.icon;
@@ -68,15 +68,9 @@ function LoadingSidebar() {
         })}
       </nav>
 
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-700">
+      <div className="absolute bottom-0 left-0 right-0 p-6 borter-t border-gray-700">
         <div className="flex items-center justify-between">
-          <div className="flex-1 min-w-0">
-            <Skeleton className="h-4 w-16 mb-1" />
-            <Skeleton className="h-3 w-24" />
-          </div>
-          <div className="ml-3">
-            <UserButton />
-          </div>
+          <UserButton showUserInfo />
         </div>
       </div>
     </div>
