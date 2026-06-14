@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         action: `/api/voice/process?sessionId=${sessionId}`,
         timeout: 10,
         speechTimeout: "auto",
-        language: getLanguageCode(session.language),
+        language: getLanguageCode(session.language) as any,
       });
 
       gather.say(
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
         action: `/api/voice/process?sessionId=${sessionId}`,
         timeout: 12,
         speechTimeout: "auto",
-        language: getLanguageCode(session.language),
+        language: getLanguageCode(session.language) as any,
         hints: "show, tell, create, get, list, help",
       });
 
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
         action: `/api/voice/process?sessionId=${sessionId}`,
         timeout: 10,
         speechTimeout: "auto",
-        language: getLanguageCode(session.language),
+        language: getLanguageCode(session.language) as any,
       });
 
       gather.say(

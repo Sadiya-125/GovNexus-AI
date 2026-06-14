@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       timeout: 45,  // Extended timeout for user input
       speechTimeout: "auto",
       finishOnKey: "#",  // User presses # when done
-      language: getLanguageCode(selectedLanguage),
+      language: getLanguageCode(selectedLanguage) as any,
       hints: "zero, one, two, three, four, five, six, seven, eight, nine",
     });
 

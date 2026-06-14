@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       action: `/api/voice/process?sessionId=${sessionId}`,
       timeout: 12,
       speechTimeout: "auto",
-      language: getLanguageCode(session.language),
+      language: getLanguageCode(session.language) as any,
     });
     gather.say("Please tell me what you need.");
   } else {
