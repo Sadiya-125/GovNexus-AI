@@ -105,6 +105,13 @@ class VoiceAgent {
         }
       }
 
+      // Provide fallback response if empty
+      if (!assistantText || assistantText.trim() === "") {
+        assistantText = language === "en"
+          ? "I'm ready to help. What would you like to do?"
+          : "मैं आपकी मदद करने के लिए तैयार हूँ। आप क्या करना चाहते हैं?";
+      }
+
       // Add messages to session history
       await sessionManager.addMessage(sessionId, "user", userMessage, language);
       await sessionManager.addMessage(
