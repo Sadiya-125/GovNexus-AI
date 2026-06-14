@@ -301,10 +301,7 @@ export default function EDAPage() {
                       const percentNum = (entry.total_sales / data.sales_by_category.reduce((sum, item) => sum + item.total_sales, 0)) * 100;
                       return percentNum > 5 ? `${percentNum.toFixed(1)}%` : '';
                     }}
-                    labelLine={(entry: any) => {
-                      const percent = ((entry.total_sales / data.sales_by_category.reduce((sum, item) => sum + item.total_sales, 0)) * 100);
-                      return percent > 5;
-                    }}
+                    labelLine={true}
                   >
                     {data.sales_by_category.map((entry, index) => (
                       <Cell
