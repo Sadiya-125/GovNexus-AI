@@ -91,12 +91,12 @@ export async function POST(request: NextRequest) {
 
     const gather = response.gather({
       input: ["dtmf", "speech"],
-      numDigits: 0,  // Allow variable number of digits
+      numDigits: 10,  // Wait for 10 digits before processing
       method: "POST",
       action: `/api/voice/collect-phone?sessionId=${sessionId}&attempt=${attempt + 1}`,
-      timeout: 45,  // Extended timeout for user input
+      timeout: 10,  // Timeout between digits
       speechTimeout: "auto",
-      finishOnKey: "#",  // User must press # to submit
+      finishOnKey: "#",  // Allow # to finish early if needed
       language: getLanguageCode(session.language) as any,
     });
     gather.say("Enter your 10 digit phone number, then press hash.");

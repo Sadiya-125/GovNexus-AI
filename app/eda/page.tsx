@@ -297,11 +297,11 @@ export default function EDAPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={90}
-                    label={(entry) => {
+                    label={(entry: any) => {
                       const percent = ((entry.total_sales / data.sales_by_category.reduce((sum, item) => sum + item.total_sales, 0)) * 100).toFixed(1);
                       return percent > 5 ? `${percent}%` : '';
                     }}
-                    labelLine={(entry) => {
+                    labelLine={(entry: any) => {
                       const percent = ((entry.total_sales / data.sales_by_category.reduce((sum, item) => sum + item.total_sales, 0)) * 100);
                       return percent > 5;
                     }}
