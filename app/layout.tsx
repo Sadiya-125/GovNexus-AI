@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { StackProvider, StackTheme } from "@stackframe/stack";
 import { stackServerApp } from "../stack/server";
 import { Inter } from "next/font/google";
-// @ts-expect-error: global CSS import without explicit type declaration
 import "./globals.css";
 
 const inter = Inter({

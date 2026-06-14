@@ -207,8 +207,8 @@ export class RequisitionService {
 
       // Recalculate costs based on new quantity
       const unitAcquisitionCost =
-        requisition.costOfSales / requisition.orderQty;
-      const unitDistributionValue = requisition.sales / requisition.orderQty;
+        Number(requisition.costOfSales) / Number(requisition.orderQty);
+      const unitDistributionValue = Number(requisition.sales) / Number(requisition.orderQty);
       const newCostOfSales = unitAcquisitionCost * quantity;
       const newSales = unitDistributionValue * quantity;
       const newProfit = newSales - newCostOfSales;

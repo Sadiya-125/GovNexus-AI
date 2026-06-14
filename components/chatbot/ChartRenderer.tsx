@@ -211,7 +211,7 @@ export default function ChartRenderer({ chartData }: ChartRendererProps) {
                 cx="50%"
                 cy="50%"
                 outerRadius={100}
-                label={(entry) => `${entry.label}: ${entry[pieDataKey]}`}
+                label={(entry: any) => `${entry.label}: ${entry[pieDataKey]}`}
                 labelLine={true}
               >
                 {processedData.map((_: any, index: number) => (

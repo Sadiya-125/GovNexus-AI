@@ -1,4 +1,4 @@
-import { OpenAI } from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   AIAgentResponse,
   ToolCall,
@@ -10,17 +10,21 @@ import { TOOL_DEFINITIONS, executeTool } from "./tools/definitions";
 import { sessionManager } from "./session";
 
 class VoiceAgent {
-  private openai: OpenAI;
+  private gemini: GoogleGenerativeAI | null = null;
 
   constructor() {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("OPENAI_API_KEY is not configured");
-    }
+    // Defer initialization to runtime
+  }
 
-    this.openai = new OpenAI({
-      apiKey,
-    });
+  private getGemini(): GoogleGenerativeAI {
+    if (!this.gemini) {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("GEMINI_API_KEY is not configured");
+      }
+      this.gemini = new GoogleGenerativeAI(apiKey);
+    }
+    return this.gemini;
   }
 
   /**
@@ -31,7 +35,7 @@ class VoiceAgent {
     sessionId: string,
     userMessage: string,
     language: SupportedLanguage,
-    conversationHistory: ConversationMessage[]
+    conversationHistory: ConversationMessage[],
   ): Promise<AIAgentResponse> {
     try {
       // Build system prompt
@@ -42,17 +46,20 @@ class VoiceAgent {
         systemPrompt,
         userMessage,
         conversationHistory,
-        language
+        language,
       );
 
-      // Call OpenAI with function calling
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-4",
-        messages,
-        tools: TOOL_DEFINITIONS as any,
-        tool_choice: "auto",
-        temperature: 0.7,
-        max_tokens: 1000,
+      // Call Gemini with function calling
+      const model = this.getGemini().getGenerativeModel({
+        model: "gemini-2.5-flash",
+        tools: [{ functionDeclarations: TOOL_DEFINITIONS as any }],
+      });
+
+      const response = await model.generateContent({
+        contents: messages.map((msg) => ({
+          role: msg.role === "user" ? "user" : "model",
+          parts: [{ text: msg.content }],
+        })),
       });
 
       let assistantText = "";
@@ -60,23 +67,19 @@ class VoiceAgent {
       let intent = "help";
 
       // Process response
-      for (const choice of response.choices) {
-        if (choice.message.content) {
-          assistantText = choice.message.content;
-        }
-
-        // Check for tool calls
-        if (choice.message.tool_calls) {
-          for (const toolCall of choice.message.tool_calls) {
-            if (toolCall.type === "function") {
-              toolCalls.push({
-                toolName: toolCall.function.name,
-                arguments: JSON.parse(toolCall.function.arguments),
-              });
-
-              // Update intent based on tool call
-              intent = this.mapToolToIntent(toolCall.function.name);
-            }
+      if (response && response.response) {
+        const parts = response.response.candidates?.[0]?.content?.parts || [];
+        for (const part of parts) {
+          if ("text" in part && part.text) {
+            assistantText = part.text;
+          }
+          if ("functionCall" in part && part.functionCall) {
+            const fc = part.functionCall;
+            toolCalls.push({
+              toolName: fc.name,
+              arguments: (fc.args || {}) as Record<string, unknown>,
+            });
+            intent = this.mapToolToIntent(fc.name);
           }
         }
       }
@@ -102,19 +105,20 @@ class VoiceAgent {
         sessionId,
         "assistant",
         assistantText,
-        language
+        language,
       );
 
       return {
         text: assistantText,
         toolCalls,
         intent: intent as any,
-        requiresUserInput: toolCalls.length === 0 && !assistantText.includes("?"),
+        requiresUserInput:
+          toolCalls.length === 0 && !assistantText.includes("?"),
       };
     } catch (error) {
       throw new VoiceError(
         "AGENT_ERROR",
-        `Failed to process input: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to process input: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -204,7 +208,7 @@ Respond naturally and conversationally. Always explain what you're doing.`,
     systemPrompt: string,
     userMessage: string,
     conversationHistory: ConversationMessage[],
-    language: SupportedLanguage
+    language: SupportedLanguage,
   ) {
     const messages: any[] = [
       {

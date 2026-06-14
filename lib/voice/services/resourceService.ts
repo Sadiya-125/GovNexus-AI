@@ -265,7 +265,7 @@ export class ResourceService {
         },
       });
 
-      return result._sum.unitCost || 0;
+      return result._sum.unitCost ? Number(result._sum.unitCost) : 0;
     } catch (error) {
       throw new VoiceError(
         "RESOURCE_ERROR",

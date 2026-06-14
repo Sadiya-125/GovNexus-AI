@@ -35,10 +35,10 @@ class SarvamClient {
       // Handle both Buffer and base64 string
       if (typeof request.audio === "string") {
         const audioBuffer = Buffer.from(request.audio, "base64");
-        const blob = new Blob([audioBuffer], { type: "audio/wav" });
+        const blob = new Blob([new Uint8Array(audioBuffer)], { type: "audio/wav" });
         formData.append("file", blob, "audio.wav");
       } else {
-        const blob = new Blob([request.audio], { type: "audio/wav" });
+        const blob = new Blob([new Uint8Array(request.audio)], { type: "audio/wav" });
         formData.append("file", blob, "audio.wav");
       }
 
