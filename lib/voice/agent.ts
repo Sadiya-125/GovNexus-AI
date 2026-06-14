@@ -53,13 +53,19 @@ class VoiceAgent {
       const model = this.getGemini().getGenerativeModel({
         model: "gemini-2.5-flash",
         tools: [{ functionDeclarations: TOOL_DEFINITIONS as any }],
+        systemInstruction: systemPrompt,
       });
 
-      const response = await model.generateContent({
-        contents: messages.map((msg) => ({
+      // Filter out system message and map remaining messages
+      const contents = messages
+        .filter((msg) => msg.role !== "system")
+        .map((msg) => ({
           role: msg.role === "user" ? "user" : "model",
           parts: [{ text: msg.content }],
-        })),
+        }));
+
+      const response = await model.generateContent({
+        contents: contents,
       });
 
       let assistantText = "";

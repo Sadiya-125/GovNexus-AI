@@ -113,15 +113,15 @@ export async function POST(request: NextRequest) {
     response.say(phonePrompts[selectedLanguage] || phonePrompts.en);
 
     // Gather phone number via DTMF or speech
-    // Use numDigits: 0 and finishOnKey: "#" to allow flexible input
+    // Require exactly 10 digits before processing
     const gather = response.gather({
       input: ["dtmf", "speech"],
-      numDigits: 0,  // Allow any number of digits
+      numDigits: 10,  // Wait for exactly 10 digits
       method: "POST",
       action: `/api/voice/collect-phone?sessionId=${sessionId}&attempt=1`,
-      timeout: 45,  // Extended timeout for user input
+      timeout: 10,  // Timeout between digits
       speechTimeout: "auto",
-      finishOnKey: "#",  // User presses # when done
+      finishOnKey: "#",  // User can press # to submit early
       language: getLanguageCode(selectedLanguage) as any,
       hints: "zero, one, two, three, four, five, six, seven, eight, nine",
     });
